@@ -1,0 +1,3 @@
+[submodule "linStat"]
+	path = linStat
+	url = https://github.com/mdavidsaver/linStat
