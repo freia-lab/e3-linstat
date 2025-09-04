@@ -22,10 +22,13 @@ include $(E3_REQUIRE_TOOLS)/driver.makefile
 EXCLUDE_ARCHS += linux-ppc64e6500
 EXCLUDE_ARCHS += linux-corei7-poky
 
+#USR_CXXFLAGS += -fno-strict-aliasing -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -D_GNU_SOURCE -fPIC -fwrapv -DNDEBUG -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -D_GNU_SOURCE -fPIC -fwrapv
+
+
 # Since this file (linstat.Makefile) is copied into
 # the module directory at build-time, these paths have to be relative
 # to that path
-APP := linstatApp
+APP := statApp
 APPDB := $(APP)/Db
 APPSRC := $(APP)/src
 
@@ -34,12 +37,48 @@ APPSRC := $(APP)/src
 #     SOURCES += $(APPSRC)/linstatMain.cpp
 #     SOURCES += $(APPSRC)/library.c
 #     HEADERS += $(APPSRC)/library.h
-#     USR_INCLUDES += -I$(where_am_I)$(APPSRC)
+USR_INCLUDES += -I$(where_am_I)$(APPSRC)
+SOURCES+= $(APPSRC)/iochooks.cpp
+SOURCES+= $(APPSRC)/devstat.cpp
+SOURCES+= $(APPSRC)/nlreact.cpp
+SOURCES+= $(APPSRC)/lsutils.cpp
+SOURCES+= $(APPSRC)/tblBase.cpp
+# host
+SOURCES+= $(APPSRC)/tblStat.cpp
+SOURCES+= $(APPSRC)/tblHost.cpp
+SOURCES+= $(APPSRC)/tblMemInfo.cpp
+SOURCES+= $(APPSRC)/tblUptime.cpp
+SOURCES+= $(APPSRC)/tblNetstat.cpp
+SOURCES+= $(APPSRC)/tblIFStat.cpp
+SOURCES+= $(APPSRC)/tblHwmon.cpp
+SOURCES+= $(APPSRC)/tblEthtool.cpp
+# process
+SOURCES+= $(APPSRC)/tblPid.cpp
+SOURCES+= $(APPSRC)/tblProcStat.cpp
+SOURCES+= $(APPSRC)/tblProcStatus.cpp
+SOURCES+= $(APPSRC)/tblProcFD.cpp
+SOURCES+= $(APPSRC)/tblProcPDB.cpp
+SOURCES+= $(APPSRC)/tblProcMallinfo.cpp
+# file system
+SOURCES+= $(APPSRC)/tblStatVFS.cpp
 
+HEADERS += $(APPSRC)/linStat.h
+HEADERS += $(APPSRC)/nlreact.h
+
+#
 TEMPLATES += $(wildcard $(APPDB)/*.db)
 TEMPLATES += $(wildcard $(APPDB)/*.proto)
 TEMPLATES += $(wildcard $(APPDB)/*.template)
 
+############################################################################
+#
+# Add any .dbd files that should be included (e.g. from user-defined functions, etc.)
+#
+############################################################################
+
+DBDS   += $(APPSRC)/linStat.dbd
+
+#
 SCRIPTS += $(wildcard ../iocsh/*.iocsh)
 
 # Note that architecture-specific source files can be specified:
@@ -61,6 +100,9 @@ SCRIPTS += $(wildcard ../iocsh/*.iocsh)
 USR_DBFLAGS += -I . -I ..
 USR_DBFLAGS += -I $(EPICS_BASE)/db
 USR_DBFLAGS += -I $(APPDB)
+
+USR_CXXFLAGS += -std=c++17
+
 
 .PHONY: vlibs
 vlibs:
