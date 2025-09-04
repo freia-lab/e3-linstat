@@ -101,7 +101,7 @@ USR_DBFLAGS += -I . -I ..
 USR_DBFLAGS += -I $(EPICS_BASE)/db
 USR_DBFLAGS += -I $(APPDB)
 
-USR_CXXFLAGS += -std=c++17
+ARCH_DEP_CXXFLAGS += -std=c++17
 
 
 .PHONY: vlibs
