@@ -27,7 +27,7 @@ common 1.0.0
 ## Installation
 
 ```sh
-$ make init patch build
+$ make init prebuild build
 $ make install
 ```
 

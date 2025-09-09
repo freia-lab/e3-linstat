@@ -25,7 +25,7 @@ EXCLUDE_ARCHS += linux-corei7-poky
 # Since this file (linstat.Makefile) is copied into
 # the module directory at build-time, these paths have to be relative
 # to that path
-APP := linstatApp
+APP := statApp
 APPDB := $(APP)/Db
 APPSRC := $(APP)/src
 
@@ -36,9 +36,22 @@ APPSRC := $(APP)/src
 #     HEADERS += $(APPSRC)/library.h
 #     USR_INCLUDES += -I$(where_am_I)$(APPSRC)
 
+SOURCES +=  $(wildcard $(APPSRC)/*.cpp)
+HEADERS +=  $(wildcard $(APPSRC)/*.h)
+
+
 TEMPLATES += $(wildcard $(APPDB)/*.db)
 TEMPLATES += $(wildcard $(APPDB)/*.proto)
 TEMPLATES += $(wildcard $(APPDB)/*.template)
+
+############################################################################
+#
+# Add any .dbd files that should be included (e.g. from user-defined functions, etc.)
+#
+############################################################################
+
+DBDS   += $(APPSRC)/linStat.dbd
+
 
 SCRIPTS += $(wildcard ../iocsh/*.iocsh)
 
@@ -52,15 +65,35 @@ SCRIPTS += $(wildcard ../iocsh/*.iocsh)
 # i.e.
 #     USR_CFLAGS_linux-ppc64e6500 += ...
 
+
+#OP_SYS_CXXFLAGS += -std=c++17
+ARCH_DEP_CXXFLAGS += -std=c++17
+
 # Same as with any source or header files, you can also use $SUBS and $TMPS to define
 # database files to be inflated (using MSI), e.g.
 #
 #     SUBS = $(wildcard $(APPDB)/*.substitutions)
 #     TMPS = $(wildcard $(APPDB)/*.template)
 
+#SUBS = $(wildcard $(APPDB)/*.substitutions)
+#TMPS = $(wildcard $(APPDB)/*.template)
+
+SUBS = $(APPDB)/linStatProc.substitutions $(APPDB)/linStatHost.substitutions $(APPDB)/linStatNIC.substitutions
+
 USR_DBFLAGS += -I . -I ..
 USR_DBFLAGS += -I $(EPICS_BASE)/db
 USR_DBFLAGS += -I $(APPDB)
+
+# Inflate netStat.db from netStat.substitutions. I couldn't figure out how to force to inflate
+# netStat first because netStat.db is used to create other db files from substitution files.
+# This target creates $(APPDB)/netStat.db
+
+prebuild: netStat
+
+netStat: $(APPDB)/netStat.substitutions
+	@echo ">>> This is the prebuild target <<<"
+	@printf "Inflating database ... %44s >>> %40s \n" "$^" "$@"
+	$(QUIET)$(MSI)    $(USR_DBFLAGS) -o $(APPDB)/$(notdir $(basename $@).db) -S $^
 
 .PHONY: vlibs
 vlibs:
