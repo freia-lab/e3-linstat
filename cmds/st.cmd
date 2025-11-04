@@ -2,7 +2,7 @@
 
 require linstat
 
-epicsEnvSet("ENGINEER", "KG")
+epicsEnvSet("ENGINEER", "MJ")
 
 #var linStatDebug 5
 
