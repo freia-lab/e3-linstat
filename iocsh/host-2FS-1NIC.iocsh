@@ -1,0 +1,17 @@
+#
+#   iocshLoad("$(linstat_DIR)/host-2FS-1NIC.iocsh,"IOC=Ctrl-freiaSrv1,FS1=run,FS2=var,NIC1=lo")
+#
+#- ####################################################
+#- >> Mandatory
+#- IOC - IOC name
+#- NIC1  -  name of the network interface
+#- >> Optional
+#- FS1   -  name of the 1st partition (default = var)
+#- FS2   -  name of the 2nd partition (default = run)
+
+
+dbLoadRecords("linStatHost.db","IOC=$(IOC)")
+dbLoadRecords("linStatNIC.db","IOC=$(IOC),NIC=$(NIC1)")
+dbLoadRecords("linStatFS.db","P=$(IOC):disk-$(FS1=var),DIR=/$(FS1=var)")
+dbLoadRecords("linStatFS.db","P=$(IOC):disk-$(FS2=run),DIR=/$(FS2=run)")
+
