@@ -1,0 +1,24 @@
+diff --git statApp/Db/timeHost.template statApp/Db/timeHost.template
+index f8b7a58..dd29ce0 100644
+--- statApp/Db/timeHost.template
++++ statApp/Db/timeHost.template
+@@ -2,5 +2,5 @@ record(stringin, "$(IOC):TOD") {
+     field(DESC, "Current time and date")
+     field(DTYP, "Soft Timestamp")
+     field(SCAN, "1 second")
+-    field(INP,  "@%m/%d/%Y %H:%M:%S%z")
++    field(INP,  "@%Y-%m-%d %H:%M:%S")
+ }
+diff --git statApp/Db/timeProc.template statApp/Db/timeProc.template
+index 45b8f76..e8a12e8 100644
+--- statApp/Db/timeProc.template
++++ statApp/Db/timeProc.template
+@@ -3,7 +3,7 @@ record(stringin, "$(IOC):STARTTOD") {
+     field(DESC, "Time and date of startup")
+     field(DTYP, "Soft Timestamp")
+     field(PINI, "YES")
+-    field(INP,  "@%m/%d/%Y %H:%M:%S%z")
++    field(INP,  "@%Y-%m-%d %H:%M:%S")
+ }
+ 
+ record(calcout, "$(IOC):HEARTBEAT") {
